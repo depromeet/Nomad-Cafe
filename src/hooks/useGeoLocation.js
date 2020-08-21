@@ -1,4 +1,3 @@
-/* global kakao */
 import { useState, useCallback, useEffect } from "react";
 import GeoLocationUtils from "../utils/GeoLocationUtils";
 
