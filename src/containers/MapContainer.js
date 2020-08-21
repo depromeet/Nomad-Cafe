@@ -135,7 +135,7 @@ const MapContainer = () => {
 
       return newCafeData;
     });
-  }, [currentCoordinates, mapInstance]);
+  }, [currentCoordinates, mapInstance, createMarker]);
 
   const getCurrentCoordinates = useCallback(() => {
     deleteAllMarkers();
@@ -146,8 +146,7 @@ const MapContainer = () => {
     fetch();
   }, [deleteAllMarkers, fetch]);
 
-  const loadCafeData = useCallback(async () => {
-    await CardStore.fetchCard();
+  const convertCardDataToCafeData = useCallback(() => {
     setCafeData(() => {
       const newCafeData = [];
       const cardData = [...toJS(CardStore.cardDatas)];
@@ -174,6 +173,10 @@ const MapContainer = () => {
 
       return newCafeData;
     });
+  }, [CardStore.cardDatas, createMarker]);
+
+  const loadCafeData = useCallback(async () => {
+    await CardStore.fetchCard();
   }, [CardStore]);
 
   const checkKakaoMapDragEnd = useCallback(() => {
@@ -242,8 +245,11 @@ const MapContainer = () => {
   }, [moveToCurrentCoordinates, setIsOutOfCenter]);
 
   useEffect(() => {
-    loadCafeData();
-  }, [loadCafeData]);
+    if (CardStore.cardDatas && CardStore.cardDatas.length <= 0) {
+      loadCafeData();
+    }
+    convertCardDataToCafeData();
+  }, [CardStore.cardDatas, convertCardDataToCafeData, loadCafeData]);
 
   useEffect(() => {
     showAllMarkers();
